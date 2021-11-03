@@ -1,0 +1,295 @@
+{% extends "Template.html" %}
+
+{% block contenido %}
+<div class="container">
+     <div class="table-responsive">
+          <table class="table table-striped table-sm table-hover tabla-medicamentos">
+               <thead>
+                    <tr>
+                         <th scope="col">Medicamento</th>
+                         <th scope="col">Cantidad</th>
+                         <th scope="col">Horario</th>
+                         <th scope="col">Dias</th>
+                         <th scope="col">Repeticion</th>
+                         <th scope="col">Libre</th>
+                         <th scope="col">Mensaje</th>
+                         <th scope="col"></th>
+                         <th scope="col"></th>
+                    </tr>
+               </thead>
+               <tbody>
+                    {% for medicamento in medicamentos %}
+                    {% if medicamento[11] != 0 %}
+                         <tr>
+                    {% else %}
+                         <tr class="table-danger">
+                    {% endif %}
+                         {% if medicamento[2] != None %}
+                         <td>
+                              <div>{{ medicamento[2] }}</div>
+                         </td>
+     
+                         <td>
+                              <div>{{ medicamento[3] }}</div>
+                         </td>
+     
+                         <td>
+                              <div>{{ medicamento[4] }}</div>
+                         </td>
+     
+                         <td>
+                              <div>{{ medicamento[5] }}</div>
+                         </td>
+     
+                         <td>
+                              <div>{{ medicamento[6] }}</div>
+                         </td>
+     
+                         <td>
+                              {% if medicamento[7] == None %}
+                              <div></div>
+                              {% endif %}
+                              {% if medicamento[7] == 1 %}
+                              <div>Si</div>
+                              {% else %}
+                              <div>No</div>
+                              {% endif %}
+                         </td>
+     
+                         <td>
+                              <div>{{ medicamento[8] }}</div>
+                         </td>
+     
+                         <td>
+                              <a href="{{ url_for('añadir_medicamento', tubo = medicamento[1]) }}"
+                                   class="btn btn-outline-dark btn-ver-medicamentos" role="button">Modificar</a>
+                         </td>
+     
+                         <td>
+                              {% if carga_tubo and carga_tubo < 8 and carga_tubo > 0 %}
+                                   <a href="{{ url_for('ver_padim', carga_tubo = 1) }}">
+                                        <input type="button" class="btn btn-outline-dark btn-ver-medicamentos" disabled
+                                             value="Cargar">
+                                   </a>
+                              {% else %}
+                                   <a href="{{ url_for('ver_padim', carga_tubo = 1 ) }}">
+                                        <input type="button" class="btn btn-outline-dark btn-ver-medicamentos"
+                                             value="Cargar">
+                                   </a>
+                              {% endif %}
+                         </td>
+     
+                         {% else %}
+     
+                         <td>
+                              <div></div>
+                         </td>
+     
+                         <td>
+                              <div></div>
+                         </td>
+     
+                         <td>
+                              <div></div>
+                         </td>
+     
+                         <td>
+                              <div></div>
+                         </td>
+     
+                         <td>
+                              <div></div>
+                         </td>
+     
+                         <td>
+                              <div></div>
+                         </td>
+     
+                         <td>
+                              <div></div>
+                         </td>
+     
+                         <td>
+                              {% if medicamento[14] == 1 %}
+                                   <a href="{{ url_for('ver_padim', carga_tubo = 1) }}">
+                                        <input type="button" class="btn btn-outline-dark btn-ver-medicamentos" disabled value="Crear">
+                                   </a>
+                              {% else %}
+                                   <a href="{{ url_for('añadir_medicamento', tubo = medicamento[1]) }}"
+                                        class="btn btn-outline-dark btn-ver-medicamentos" role="button">Crear</a>
+                              {% endif %}
+                         </td>
+     
+                         <td>
+                              <input type="button" class="btn btn-outline-dark btn-ver-medicamentos" value="Cargar" disabled>
+                         </td>
+                         {% endif %}
+                    </tr>
+                    {% endfor %}
+               </tbody>
+          </table>
+     
+          <div class="eventos">
+               <table class="table table-striped table-sm table-hover">
+                    <thead>
+                         <th>Evento</th>
+                         <th>Dia</th>
+                         <th>Hora</th>
+                    </thead>
+     
+                    <tbody>
+                         {% for evento in ev_tomas %}
+                         <tr class="table-info">
+                              <td>
+                                   Toma de medicamento
+                                   {% for medicamento in medicamentos %}
+                                        {% if evento[0] == medicamento[12] %}
+                                             {{ medicamento[2] }}
+                                        {% endif %}
+                                   {% endfor %}
+                              </td>
+     
+                              <td>
+                                   {% if evento[2] == 'Mon' %}
+                                   Lunes
+                                   {% endif %}
+     
+                                   {% if evento[2] == 'Tue' %}
+                                   Martes
+                                   {% endif %}
+     
+                                   {% if evento[2] == 'Wed' %}
+                                   Miercoles
+                                   {% endif %}
+     
+                                   {% if evento[2] == 'Thu' %}
+                                   Jueves
+                                   {% endif %}
+     
+                                   {% if evento[2] == 'Fri' %}
+                                   Viernes
+                                   {% endif %}
+     
+                                   {% if evento[2] == 'Sat' %}
+                                   Sabado
+                                   {% endif %}
+     
+                                   {% if evento[2] == 'Sun' %}
+                                   Domingo
+                                   {% endif %}
+                              </td>
+     
+                              <td>
+                                   {{ evento[3] }}
+                              </td>
+     
+                         </tr>
+                         {% endfor %}
+     
+                         {% for evento in ev_dispenser %}
+                         <tr class="table-secondary">
+                              <td>
+                                   Dispensacion de
+                                   {% for medicamento in medicamentos %}
+                                        {% if evento[0] == medicamento[12] %}
+                                             {{ medicamento[2] }}
+                                        {% endif %}
+                                   {% endfor %}
+                              </td>
+     
+                              <td>
+                                   {% if evento[2] == 'Mon' %}
+                                   Lunes
+                                   {% endif %}
+     
+                                   {% if evento[2] == 'Tue' %}
+                                   Martes
+                                   {% endif %}
+     
+                                   {% if evento[2] == 'Wed' %}
+                                   Miercoles
+                                   {% endif %}
+     
+                                   {% if evento[2] == 'Thu' %}
+                                   Jueves
+                                   {% endif %}
+     
+                                   {% if evento[2] == 'Fri' %}
+                                   Viernes
+                                   {% endif %}
+     
+                                   {% if evento[2] == 'Sat' %}
+                                   Sabado
+                                   {% endif %}
+     
+                                   {% if evento[2] == 'Sun' %}
+                                   Domingo
+                                   {% endif %}
+                              </td>
+     
+                              <td>
+                                   {{ evento[3] }}
+                              </td>
+     
+                         </tr>
+                         {% endfor %}
+     
+                         {% if ev_conexion %}
+                         {% if ev_conexion[0] == 0 %}
+                         <tr class="table-danger">
+                              {% else %}
+                         <tr class="table-success">
+                              {% endif %}
+                              <td>
+                                   {% if ev_conexion[0] == 0 %}
+                                   Padim sin conexion
+                                   {% else %}
+                                   Padim con conexion
+                                   {% endif %}
+                              </td>
+     
+                              <td>
+                                   {% if ev_conexion[0] == 0 %}
+                                   {% endif %}
+     
+                                   {% if ev_conexion[1] == 'Mon' %}
+                                   Lunes
+                                   {% endif %}
+     
+                                   {% if ev_conexion[1] == 'Tue' %}
+                                   Martes
+                                   {% endif %}
+     
+                                   {% if ev_conexion[1] == 'Wed' %}
+                                   Miercoles
+                                   {% endif %}
+     
+                                   {% if ev_conexion[1] == 'Thu' %}
+                                   Jueves
+                                   {% endif %}
+     
+                                   {% if ev_conexion[1] == 'Fri' %}
+                                   Viernes
+                                   {% endif %}
+     
+                                   {% if ev_conexion[1] == 'Sat' %}
+                                   Sabado
+                                   {% endif %}
+     
+                                   {% if ev_conexion[1] == 'Sun' %}
+                                   Domingo
+                                   {% endif %}
+                              </td>
+     
+                              <td>
+                                   {{ ev_conexion[2] }}
+                              </td>
+     
+                         </tr>
+                         {% endif %}
+                    </tbody>
+               </table>
+          </div>
+     </div>
+</div>
+{% endblock contenido %}

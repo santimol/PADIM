@@ -1,0 +1,131 @@
+/*Para todas las paginas*/
+body{
+    background-color: white;
+}
+
+#logo{
+    margin: auto;
+}
+@media(max-width:768px){
+    .col-forms{
+        margin: auto;
+    }
+}
+@media(max-width:500px){
+    .logo{
+        display: none !important;
+    }
+}
+@media(min-width:769px){
+    .col-forms{
+        margin-right: 5%;
+    }
+}
+.nav-link{
+    color: black;
+    font-weight: 500;
+}
+.titulo{
+    text-decoration: underline;
+}
+.row{
+    margin-left: auto;
+    margin-right: auto;
+}
+.content-section{
+    margin-left: 25%;
+    margin-right: 25%;
+}
+
+/* PARA HOME */
+.carousel{
+    height: 400px;
+}
+@media(max-width:768px){
+    .carousel{
+        height: auto;
+    }
+}
+.carousel-control-prev-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23ccc' viewBox='0 0 8 8'%3E%3Cpath d='M5.25 0l-4 4 4 4 1.5-1.5-2.5-2.5 2.5-2.5-1.5-1.5z'/%3E%3C/svg%3E") !important;
+}
+.carousel-control-next-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23ccc' viewBox='0 0 8 8'%3E%3Cpath d='M2.75 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z'/%3E%3C/svg%3E") !important;
+}
+
+.wise-iframe-wrapper {
+    position: relative;
+    padding-bottom: 56.10%;
+    height: 0;
+    overflow: hidden;
+}
+
+.wise-iframe-wrapper iframe,
+.wise-iframe-wrapper object,
+.wise-iframe-wrapper embed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* PARA LOS FORMULARIOS */
+form{
+    padding-top: 2%;
+}
+.form-control-lg{
+    font-size: 15px;
+}
+textarea.form-control-lg.añadir-medicamento{
+    height: 40px;
+}
+
+small{
+    padding-left: 3px;
+}
+
+.form-group{
+    width:auto;
+}
+
+/* PARA FORMULARIO DE CONTACTO */
+.flex-item{
+    justify-content: space-between;
+}
+
+.formulario-contacto{
+    padding-left: 10%;
+    padding-right: 10%;
+}
+
+.form-contacto{
+    width: 45%;
+}
+@media(max-width:600px){
+    .form-contacto{
+        width: 100%;
+    }
+}
+
+
+/*PARA FORMULARIO DE MEDICAMENTO ESPECIFICAMENTE */
+#toma_libre{
+    width: 25%;
+    height: 25px;
+}
+
+/*PARA VER MEDICAMENTOS EN ESPECIFICO*/
+.btn-ver-medicamentos{
+    width: 100%;
+    text-align: center;
+}
+
+.tabla-medicamentos{
+    margin-top: 10px;
+}
+
+/* Para HOME EN ESPECIFICO */
+.background{
+    margin: 0;
+}

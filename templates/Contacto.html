@@ -1,0 +1,90 @@
+{% extends "Template.html" %}
+
+{% block contenido %}
+
+<div class="formulario-contacto">
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group mt-4">
+            <div class="row flex-item">
+                <div class="form-group form-contacto">
+                    {{ form.nombre.label(class="form-control-label") }}
+                    {% if form.nombre.errors %}
+                        {{form.nombre(class="form-control formcontrol-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.nombre.errors %}
+                            <span> {{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.nombre(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                
+                <div class="form-group form-contacto">
+                    {{ form.apellido.label(class="form-control-label") }}
+                    {% if form.apellido.errors %}
+                        {{form.apellido(class="form-control formcontrol-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.apellido.errors %}
+                            <span> {{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.apellido(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="row flex-item">
+                <div class="form-group form-contacto">
+                    {{ form.telefono.label(class="form-control-label") }}
+                    {% if form.telefono.errors %}
+                        {{form.telefono(class="form-control formcontrol-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.telefono.errors %}
+                            <span> {{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.telefono(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                
+                <div class="form-group form-contacto">
+                    {{ form.mail.label(class="form-control-label") }}
+                    {% if form.mail.errors %}
+                        {{form.mail(class="form-control formcontrol-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.mail.errors %}
+                            <span> {{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.mail(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                {{ form.mensaje.label(class="form-control-label") }}
+                {% if form.mensaje.errors %}
+                    {{form.mensaje(class="form-control formcontrol-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.mensaje.errors %}
+                        <span> {{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.mensaje(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+
+            <div class="form-group text-center">
+                {{ form.enviar(class="btn btn-outline-dark") }}
+            </div>
+        </fieldset>
+    </form>
+</div>
+
+{% endblock contenido %}

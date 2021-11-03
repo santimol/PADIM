@@ -1,0 +1,59 @@
+{% extends "Template.html" %}
+
+{% block contenido %}
+
+    <div class="container">
+        {% for consulta in consultas %}
+            <div class="posteo mt-5">
+                <div class="header-posteo">
+                    <h6 style="float: left;">{{ consulta[0] }}, {{ consulta[1] }}</h6>
+                    <h6 style="float: right;">fecha: {{ consulta[7] }}</h6>
+                    <div style="clear: both;"></div>
+                    <hr style="width: 90%;">
+                </div>
+                <div class="body-posteo">
+                    <span class="titulo" style="font-weight: 500;">Mensaje:</span>
+                    <div class="mt-1 border" style="border-radius: 3px;">
+                        <p class="pl-2">{{ consulta[4] }}</p>
+                    </div>
+                </div>
+                <div class="footer-posteo mt-2">
+                    <div>
+                        <span class="titulo" style="font-weight: 500;">Telefono:</span>
+                        <span> {{ consulta[2] }} &ensp;&ensp;</span>
+                        <span  class="titulo" style="font-weight: 500;">Mail:</span>
+                        <span> {{ consulta[3] }}</span>
+                    </div>
+                    <form method="POST" action="" class="form-respuesta" id="form-{{ consulta[8] }}">
+                        {{ form.hidden_tag() }}
+                        <fieldset class="form-group mt-1">
+                            <div class="form-group" style="display: none;">
+                                {{ form.id_consulta.label(class="form-control-label") }}
+                                {{ form.id_consulta(class="form-control form-control-lg", value=consulta[8]) }}
+                            </div>
+
+                            <div class="form-group">
+                                {{ form.respuesta.label(class="form-control-label") }}
+                                {% if form.respuesta.errors %}
+                                    {{form.respuesta(class="form-control formcontrol-lg is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.respuesta.errors %}
+                                            <span> {{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.respuesta(class="form-control form-control-lg") }}
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                {{ form.enviar(class="btn btn-outline-dark") }}
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+            <hr>
+        {% endfor %}
+    </div>
+
+{% endblock contenido %}

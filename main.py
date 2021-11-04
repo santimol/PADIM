@@ -284,7 +284,7 @@ def login():
             id_padims = consulta_padims.fetchall()
             for id_padim in id_padims:
                 if form.id_padim.data == id_padim[0]:
-                    consulta_contraseñas = conn.execute("SELECT contraseña FROM usuarios")
+                    consulta_contraseñas = conn.execute(f"SELECT contraseña FROM usuarios WHERE id_padim = {int(form.id_padim.data)}")
                     contraseñas = consulta_contraseñas.fetchall()
                     for contraseña in contraseñas:
                         if  contraseña[0] == form.password.data:
@@ -302,7 +302,7 @@ def login():
         return render_template("LogIn.html", title='inicio de seción', form=form)
 
 #Enruto para signup
-@app.route("/signup", methods=['POST', 'GET'])       
+@app.route("/signup", methods=['POST', 'GET'])
 def signup():
     if logueado():
         id_padim = session["padim"]

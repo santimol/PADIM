@@ -1,5 +1,4 @@
-# coding=utf-8
-from flask import Flask, render_template, redirect, flash, url_for, session
+from flask import Flask, render_template, redirect, flash, url_for, session, request
 from forms import Register_form, Login_form, Añadir_medicamento, Contacto, Ver_consultas, Vaciar_tubo, Deshabilitar_tubo, Habilitar_tubo
 import sqlite3
 import os
@@ -8,9 +7,10 @@ import smtplib
 
 #Inicio la app
 app = Flask(__name__)  # nombre del modulo
+app.debug = True
 SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
-app.permanent_session_lifetime = timedelta(minutes=30) 
+app.permanent_session_lifetime = timedelta(minutes=30)
 
 
 ##################################FUNCIONES######################################
@@ -35,7 +35,7 @@ def validar_medicamento(nombre, id):
 def enviar_mail(nombre,apellido,mail,telefono):
     server = smtplib.SMTP('64.233.184.108')
     server.starttls()
-    server.login('proyecto6to2021@gmail.com', 'fernando1-')
+    server.login('proyecto6to2021@gmail.com', '2021fernando')
     header = f'Recivimos tu consulta {nombre}'
     body = f'Hola {nombre} {apellido}, te queremos avisar de que tu consulta nos llego exitosamente, en las proximas 24hs te vamos a contactar via mail, o via el telefono que indicaste en el formulario ({telefono})'
     msg = f"Subject: {header}\n\n{body}"
@@ -45,7 +45,7 @@ def enviar_mail(nombre,apellido,mail,telefono):
 def enviar_respuesta(mail, mensaje):
     server = smtplib.SMTP('64.233.184.108')
     server.starttls()
-    server.login('proyecto6to2021@gmail.com', 'fernando1-')
+    server.login('proyecto6to2021@gmail.com', '2021fernando')
     header = f'Respuesta a tu consulta'
     msg = f"Subject: {header}\n\n{mensaje}"
     server.sendmail('proyecto6to2021@gmail.com', mail, msg)
@@ -59,9 +59,19 @@ def enviar_respuesta(mail, mensaje):
 def home():
     if logueado():
         id_padim = session["padim"]
-        return render_template("Home.html", padim=id_padim)   
+        return render_template("Home.html", padim=id_padim)
     else:
         return render_template("Home.html")
+
+
+@app.route("/comprar")
+def comprar():
+    if logueado():
+        id_padim = session["padim"]
+        return render_template("Comprar.html", padim=id_padim)
+    else:
+        return render_template("Comprar.html")
+
 
 #enruto para añadir/modificar medicamento
 @app.route("/añadirmedicamento/<tubo>", methods=['POST', 'GET'])
@@ -141,7 +151,7 @@ def añadir_medicamento(tubo):
 def ver_padim(carga_tubo):
     if logueado():
         id_padim = session["padim"]
-    
+
     else:
         flash("Por favor, inicia secion para ver tu P.A.D.I.M", "info")
         return redirect(url_for('login'))
@@ -201,7 +211,7 @@ def ver_padim(carga_tubo):
         flash(f"Se esta cargando {nombre[0]}", "info")
     elif carga_tubo:
         flash("ERROR tubo incorrecto", "danger")
-    
+
     carga_tubo = 0
     cargas_con = conn.execute(f"SELECT carga FROM padim_tubos WHERE id_padim = {id_padim}")
     cargas = cargas_con.fetchall()
@@ -224,7 +234,7 @@ def contacto():
         if form.validate_on_submit():
             enviar_mail(form.nombre.data, form.apellido.data, form.mail.data, form.telefono.data)
             conn = sqlite3.connect('PADIM.db')
-            
+
             hoy = date.today()
             fecha = hoy.strftime("%d/%m/%Y")
             add_consulta = f"INSERT INTO consultas (nombre, apellido, telefono, mail, mensaje, fecha)\
@@ -251,7 +261,7 @@ def contacto():
             conn.commit()
         consulta_consultas = conn.execute("SELECT * FROM consultas WHERE respondida=0")
         consultas = consulta_consultas.fetchall()
-        
+
         return render_template("VerConsultas.html", padim=id_padim, title='contacto', form=form, consultas=consultas)
 
 
@@ -318,7 +328,7 @@ def signup():
                 conn.close()
                 flash('Ya hay una cuenta para ese PADIM, proba iniciando secion', 'warning')
                 return render_template("SignUp.html", padim=id_padim, title='crear cuenta', form=form)
-            
+
             consulta_emails = conn.execute("SELECT mail FROM usuarios")
             emails = consulta_emails.fetchall()
             for email in emails:
@@ -331,7 +341,7 @@ def signup():
                             VALUES ("{form.email.data}", "{form.id_padim.data}", "{form.password.data}")'
         conn.execute(insertar_usuario)
         conn.commit()
-        
+
         for i in range(1,7):
             crear_medicamentos = f'INSERT INTO padim_tubos (id_padim, id_tubo) \
                                     VALUES ({form.id_padim.data}, {i})'
@@ -344,6 +354,362 @@ def signup():
         return render_template("SignUp.html", padim=id_padim,title='crear cuenta', form=form)
 
 
+#Enruto para el node
+@app.route("/node", methods=['GET'])
+def node():
 
-if __name__ == '__main__':
+    if request.method == 'GET':
+        #ALMACENO GENERALIDADES
+        IDPADIMTUBO = request.args.get('PadimTuboId')
+        PADIMID = request.args.get('PadimId')
+        PATUBO = request.args.get('PaTubo')
+        DIAPHP = request.args.get('Dia')
+        TUBOST = "padim_tubos"
+        TOMAT = "tomas"
+        DISPT = "dispensacion"
+        USERT = "usuarios"
+
+        #ALMACENO PARA LA SIMULACIÓN DE CARGA
+        CARGA1 = request.args.get('input1')
+        CARGA2 = request.args.get('input2')
+        CARGA3 = request.args.get('input3')
+        CARGA4 = request.args.get('input4')
+        CARGA5 = request.args.get('input5')
+        CARGA6 = request.args.get('input6')
+        MENSAJEALARMA = request.args.get('nOMbreAl')
+
+        #GET ID PADIM-TUBO
+        GETIDPT = request.args.get('GetIdPT')
+
+        #CHEQUEO DISPENSADO
+        DISPCHECK = request.args.get('DispChk')
+
+        #CHEQUEO CARGA
+        CARGACHECK = request.args.get('CargaChk')
+
+        #ACTUALIZACION DE MEDICAMENTOS
+        CARGAEND = request.args.get('CargaEnd')
+        PAST = request.args.get('Past')
+        CTDAD = request.args.get('Ctdad')
+
+        #CHEQUEO ALARMAS
+        ALARMASCHECK = request.args.get('AlarmaChk')
+
+        #CHEQUEO TIEMPO
+        TIMECHECK = request.args.get('TimeChk')
+
+        #TOMA Y DISPENSADO
+        TOMA = request.args.get('Toma')
+        DISP = request.args.get('Disp')
+        FECHAPHP = request.args.get('Fecha')
+
+        #ENVIAR EMAIL
+        SEMAIL = request.args.get('Semail')
+        CASEMAIL = request.args.get('CaseMail')
+
+        #return f"{TIMECHECK}-{PADIMID}"
+
+        #
+        #SIMULACION DE CARGA
+        #
+        if MENSAJEALARMA != None:
+            conn = sqlite3.connect('PADIM.db')
+            MENSAJESQL = f"UPDATE {TUBOST} SET mensaje={MENSAJEALARMA} WHERE id_padim_tubo={IDPADIMTUBO}"
+            conn.execute(MENSAJESQL)
+            conn.commit()
+            conn.close()
+
+
+        if CARGA1 == '1' or CARGA1 == '0':
+            conn = sqlite3.connect('PADIM.db')
+            MENSAJESQL = f"UPDATE {TUBOST} SET carga={CARGA1} WHERE id_tubo=1 AND id_padim={PADIMID}"
+            conn.execute(MENSAJESQL)
+            conn.commit()
+            conn.close()
+
+        if CARGA2 == '1' or CARGA2 == '0':
+            conn = sqlite3.connect('PADIM.db')
+            MENSAJESQL = f"UPDATE {TUBOST} SET carga={CARGA2} WHERE id_tubo=2 AND id_padim={PADIMID}"
+            conn.execute(MENSAJESQL)
+            conn.commit()
+            conn.close()
+
+        if CARGA3 == '1' or CARGA3 == '0':
+            conn = sqlite3.connect('PADIM.db')
+            MENSAJESQL = f"UPDATE {TUBOST} SET carga={CARGA3} WHERE id_tubo=3 AND id_padim={PADIMID}"
+            conn.execute(MENSAJESQL)
+            conn.commit()
+            conn.close()
+
+        if CARGA4 == '1' or CARGA4 == '0':
+            conn = sqlite3.connect('PADIM.db')
+            MENSAJESQL = f"UPDATE {TUBOST} SET carga={CARGA4} WHERE id_tubo=4 AND id_padim={PADIMID}"
+            conn.execute(MENSAJESQL)
+            conn.commit()
+            conn.close()
+
+        if CARGA5 == '1' or CARGA5 == '0':
+            conn = sqlite3.connect('PADIM.db')
+            MENSAJESQL = f"UPDATE {TUBOST} SET carga={CARGA5} WHERE id_tubo=5 AND id_padim={PADIMID}"
+            conn.execute(MENSAJESQL)
+            conn.commit()
+            conn.close()
+
+        if CARGA6 == '1' or CARGA6 == '0':
+            conn = sqlite3.connect('PADIM.db')
+            MENSAJESQL = f"UPDATE {TUBOST} SET carga={CARGA6} WHERE id_tubo=6 AND id_padim={PADIMID}"
+            conn.execute(MENSAJESQL)
+            conn.commit()
+            conn.close()
+
+
+
+        #
+        #GET ID PADIM TUBO
+        #
+        if GETIDPT == '1':
+            GETIDPT = '0'
+            conn = sqlite3.connect('PADIM.db')
+
+            MENSAJESQL = f"SELECT id_tubo, id_padim_tubo FROM {TUBOST} WHERE id_padim={PADIMID}"
+            SEND = conn.execute(MENSAJESQL)
+            ANSQL= SEND.fetchall()
+
+            MENSAJESQL = f"SELECT COUNT(*) FROM {TUBOST} WHERE id_padim={PADIMID}"
+            SEND = conn.execute(MENSAJESQL)
+            CANTIDAD = SEND.fetchone()
+            AUX=ANSQL[0]
+            TONODE=""
+
+            if CANTIDAD[0]>=1:
+                for i in range (CANTIDAD[0]):
+                    TONODE =f"{TONODE}{ANSQL[i-1][0]}-{ANSQL[i-1][1]};"
+                return f"{TONODE}#"
+            else:
+                return f"N#"
+
+            conn.close()
+
+        #
+        #CHEQUEO DISPENSADO
+        #
+        if DISPCHECK == '1':
+            DISPCHECK = '0'
+
+            conn = sqlite3.connect('PADIM.db')
+
+            MENSAJESQL = f"SELECT hora FROM {DISPT} WHERE id_padim_tubo={PATUBO} AND dia='{DIAPHP}' ORDER BY hora DESC"
+            SEND = conn.execute(MENSAJESQL)
+            ANSQL= SEND.fetchall()
+            #return f"{ANSQL}"
+            MENSAJESQL = f"SELECT COUNT(*) FROM {DISPT} WHERE id_padim_tubo={PATUBO} AND dia='{DIAPHP}'"
+            SEND = conn.execute(MENSAJESQL)
+            CANTIDAD = SEND.fetchone()
+
+            TONODE=""
+
+            if CANTIDAD[0]>=1:
+                TONODE= ANSQL[0][0]
+                return f"{TONODE}#"
+            else:
+                return f"N#"
+
+            conn.close()
+
+        #
+        #CHEQUEO CARGA
+        #
+        if CARGACHECK == '1':
+            CARGACHECK = '0'
+            conn = sqlite3.connect('PADIM.db')
+
+            MENSAJESQL = f"SELECT id_tubo FROM {TUBOST} WHERE carga=1 AND id_padim={PADIMID}"
+            SEND = conn.execute(MENSAJESQL)
+            ANSQL= SEND.fetchone()
+
+            MENSAJESQL = f"SELECT COUNT(*) FROM {TUBOST} WHERE carga=1 AND id_padim={PADIMID}"
+            SEND = conn.execute(MENSAJESQL)
+            CANTIDAD = SEND.fetchone()
+
+            TONODE=""
+
+
+            if CANTIDAD[0]>=1:
+                TONODE= ANSQL[0]
+                return f"{TONODE}#"
+            else:
+                return f"N#"
+
+            conn.close()
+
+        #
+        #ACTUALIZACIÓN DE MEDICAMENTOS
+        #
+        if CARGAEND == '1':
+            CARGAEND = '0'
+            conn = sqlite3.connect('PADIM.db')
+
+            MENSAJESQL = f"UPDATE {TUBOST} SET cantidad_disponible={CTDAD}, carga=0 WHERE id_tubo={PAST} AND id_padim={PADIMID}"
+            conn.execute(MENSAJESQL)
+
+            conn.commit()
+            conn.close()
+
+        #
+        #CHEQUEO ALARMAS
+        #
+        if ALARMASCHECK == '1':
+            ALARMASCHECK = '0'
+            conn = sqlite3.connect('PADIM.db')
+
+            MENSAJESQL = f"SELECT id_tubo, horario, dias, cantidad_dispensar, repeticion, mensaje, toma_libre, nombre, hab_dispensar FROM {TUBOST} WHERE dias IS NOT NULL AND id_padim={PADIMID}"
+            SEND = conn.execute(MENSAJESQL)
+            ANSQL= SEND.fetchall()
+
+            MENSAJESQL = f"SELECT COUNT(*) FROM {TUBOST} WHERE nombre IS NOT NULL AND id_padim={PADIMID}"
+            SEND = conn.execute(MENSAJESQL)
+            CANTIDAD = SEND.fetchone()
+
+            TONODE=""
+            if CANTIDAD[0]>=1:
+                for i in range (CANTIDAD[0]):
+                    TONODE =f"{TONODE}T{ANSQL[i-1][0]};{ANSQL[i-1][1]};{ANSQL[i-1][2]};{ANSQL[i-1][3]};{ANSQL[i-1][4]};{ANSQL[i-1][5]};{ANSQL[i-1][6]};{ANSQL[i-1][7]};{ANSQL[i-1][8]}?"
+                return f"{TONODE}#"
+            else:
+                return f"N#"
+            conn.close()
+
+        #
+        #CHEQUEO TIEMPO
+        #
+        if TIMECHECK == '1':
+            TIMECHECK = '0'
+            conn = sqlite3.connect('PADIM.db')
+
+            MENSAJESQL = f"UPDATE {TUBOST} SET tiempo=CURRENT_TIMESTAMP WHERE id_padim={PADIMID}"
+            conn.execute(f"{MENSAJESQL}")
+            conn.commit()
+
+            MENSAJESQL = f"SELECT tiempo FROM {TUBOST} WHERE id_padim={PADIMID}"
+            SEND = conn.execute(MENSAJESQL)
+            ANSQL = SEND.fetchone()
+
+            DIACT1=datetime.today().strftime('%A')
+            DIACT2=DIACT1[0:3]
+            TONODE=f"H{DIACT2};{ANSQL[0]}"
+            return f"{TONODE}#"
+
+            conn.close()
+
+        #
+        #AVISO DE TOMA
+        #
+        if TOMA == '1':
+            TOMA = '0'
+            conn = sqlite3.connect('PADIM.db')
+
+            if FECHAPHP != "":
+                MENSAJESQL = f"INSERT INTO {TOMAT}(id_padim_tubo, id_padim, hora, dia) VALUES({IDPADIMTUBO},{PADIMID},'{FECHAPHP}', '{DIA}')"
+            else:
+                DIACT1=datetime.today().strftime('%A')
+                DIACT2=DIACT1[0:3]
+                if DIACT2 == "Mon":
+                    DIA=1
+                elif DIACT2 == "Tue":
+                    DIA=2
+                elif DIACT2 == "Wed":
+                    DIA=3
+                elif DIACT2 == "Thu":
+                    DIA=4
+                elif DIACT2 == "Fri":
+                    DIA=5
+                elif DIACT2 == "Sat":
+                    DIA=6
+                elif DIACT2 == "Sun":
+                    DIA=7
+
+                MENSAJESQL = f"INSERT INTO {TOMAT}(id_padim_tubo, id_padim, hora, dia) VALUES({IDPADIMTUBO},{PADIMID},CURRENT_TIMESTAMP, '{DIA}'')"
+
+            conn.execute(MENSAJESQL)
+            conn.commit()
+            conn.close()
+
+        #
+        #AVISO DE DISPENSADO
+        #
+        if DISP == '1':
+            DISP = '0'
+            conn = sqlite3.connect('PADIM.db')
+
+            if FECHAPHP != "":
+                MENSAJESQL = f"INSERT INTO {DISPT}(id_padim_tubo, id_padim, hora, dia) VALUES({IDPADIMTUBO},{PADIMID},'{FECHAPHP}', '{DIA}')"
+            else:
+                DIACT1=datetime.today().strftime('%A')
+                DIACT2=DIACT1[0:3]
+                if DIACT2 == "Mon":
+                    DIA=1
+                elif DIACT2 == "Tue":
+                    DIA=2
+                elif DIACT2 == "Wed":
+                    DIA=3
+                elif DIACT2 == "Thu":
+                    DIA=4
+                elif DIACT2 == "Fri":
+                    DIA=5
+                elif DIACT2 == "Sat":
+                    DIA=6
+                elif DIACT2 == "Sun":
+                    DIA=7
+
+                MENSAJESQL = f"INSERT INTO {DISPT}(id_padim_tubo, id_padim, hora, dia) VALUES({IDPADIMTUBO},{PADIMID},CURRENT_TIMESTAMP, '{DIA}'')"
+
+            conn.execute(MENSAJESQL)
+            conn.commit()
+            conn.close()
+        #
+        #ENVIAR EMAIL
+        #
+        if SEMAIL == '1':
+            SEMAIL = '0'
+            conn = sqlite3.connect('PADIM.db')
+
+            MENSAJESQL = f"SELECT nombre FROM {TUBOST} WHERE id_padim_tubo={PATUBO}"
+            SEND = conn.execute(MENSAJESQL)
+            NOMBREMEDICAMENTO = SEND.fetchone()
+
+            MENSAJESQL= f"SELECT mail FROM {USERT} WHERE id_padim={PADIMID}"
+            SEND = conn.execute(MENSAJESQL)
+            TOEMAIL = SEND.fetchone()
+
+            MENSAJESQL= f"SELECT cantidad_disponible FROM {TUBOST} WHERE id_padim_tubo={PATUBO}"
+            SEND = conn.execute(MENSAJESQL)
+            UDISP = SEND.fetchone()
+
+            if CASEMAIL == '1':#CASO FALTA TOMAR
+                EMENSAJE = f"Nos comunicamos para informar que el medicamento {NOMBREMEDICAMENTO} fue dispensado hace mas de 15 minutos, pero aun no fue tomado."
+                EHEADER = "ALERTA: MEDICAMENTO SIN TOMAR"
+                server = smtplib.SMTP('64.233.184.108')
+                server.starttls()
+                server.login('proyecto6to2021@gmail.com', '2021fernando')
+                msg = f"Subject: {EHEADER}\n\n{EMENSAJE}"
+                server.sendmail('proyecto6to2021@gmail.com', TOEMAIL, msg)
+                server.close()
+
+            elif CASEMAIL == '2': #CASO POCAS PASTILLAS DISPONIBLES
+                EMENSAJE = f"Nos comunciamos para informar que quedan pocas unidades del medicamento {NOMBREMEDICAMENTO}. Unidades restantes: {UDISP}."
+                EHEADER = "ALERTA: ESCACEZ DE MEDICAMENTOS"
+                server = smtplib.SMTP('64.233.184.108')
+                server.starttls()
+                server.login('proyecto6to2021@gmail.com', '2021fernando')
+                msg = f"Subject: {EHEADER}\n\n{EMENSAJE}"
+                server.sendmail('proyecto6to2021@gmail.com', TOEMAIL, msg)
+                server.close()
+
+            conn.close()
+        return  "no entro a ningun lado bro"
+
+    else:
+        return 'oknt'
+
+if __name__ == "__main__":
     app.run(debug=True)

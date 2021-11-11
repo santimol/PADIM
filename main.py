@@ -55,22 +55,41 @@ def enviar_respuesta(mail, mensaje):
 ##################################FUNCIONES######################################
 
 #Enruto para home
-@app.route("/", methods=['POST', 'GET'])
+@app.route("/")
 def home():
     if logueado():
         id_padim = session["padim"]
-        return render_template("Home.html", padim=id_padim)
     else:
-        return render_template("Home.html")
+        id_padim = None
+
+    return render_template("Home.html", padim=id_padim)
 
 
+#Enruto para comprar
 @app.route("/comprar")
 def comprar():
     if logueado():
         id_padim = session["padim"]
-        return render_template("Comprar.html", padim=id_padim)
     else:
-        return render_template("Comprar.html")
+        id_padim = None
+    conn = sqlite3.connect('PADIM.db')
+    productos = conn.execute("SELECT * FROM productos")
+    productos = productos.fetchall()
+    conn.close()
+    return render_template("Comprar.html", padim=id_padim, productos=productos, title='Comprar')
+
+@app.route("/compra-producto/<idproducto>")
+def comprar_producto(idproducto):
+    if logueado():
+        id_padim = session["padim"]
+    else:
+        id_padim = None
+
+    conn = sqlite3.connect('PADIM.db')
+    producto = conn.execute(f"SELECT * FROM productos WHERE id_producto={idproducto}")
+    producto = producto.fetchall()
+    conn.close()
+    return render_template("ComprarProducto.html", producto=producto[0], padim=id_padim)
 
 
 #enruto para añadir/modificar medicamento
@@ -89,7 +108,6 @@ def añadir_medicamento(tubo):
 
     if añadir_form.submit_medicamento.data and añadir_form.validate():
         if validar_medicamento(añadir_form.nombre.data, id_padim):
-            conn = sqlite3.connect('PADIM.db')
             dias_f = añadir_form.dia.data
             dias = ""
             for dia in dias_f:
@@ -711,5 +729,7 @@ def node():
     else:
         return 'oknt'
 
-if __name__ == "__main__":
-    app.run(debug=True)
+#
+#    if __name__ == "__main__":
+#        app.run(debug=True)
+#

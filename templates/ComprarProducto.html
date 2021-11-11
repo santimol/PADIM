@@ -1,0 +1,34 @@
+{% extends "Template.html" %}
+
+{% block contenido %}
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <h3 class="card-title">{{ producto[1] }}</h3>
+            <h6 class="card-subtitle">{{ producto[2] }}</h6>
+            <div class="row">
+                <div class="col-lg-5 col-md-5 col-sm-6">
+                    <div class="white-box text-center">
+                        <img src="" class="img-responsive" alt="">
+                    </div>
+                </div>
+                <div class="col-lg-7 col-md-7 col-sm-6">
+                    <h4 class="box-title mt-5">Descripción</h4>
+                    <p>{{ producto[6] }}</p>
+                    <h2 class="mt-5">
+                        ${{ producto[5] }}
+                    </h2>
+                    <button class="btn btn-dark mt-2">Comprar</button>
+                    <h3 class="box-title mt-5">Caracteristicas principales</h3>
+                    <ul class="list-unstyled">
+                        <li><i class="fa fa-check text-success"></i>Conexion a WIFI</li>
+                        <li><i class="fa fa-check text-success"></i>Automatico</li>
+                        <li><i class="fa fa-check text-success"></i>Pagina de monitoreo</li>
+                        <li><i class="fa fa-check text-success"></i>Pagina de administracion</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock contenido %}

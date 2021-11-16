@@ -132,6 +132,12 @@ def añadir_medicamento(tubo):
             flash("Ya tenes un medicamento con ese nombre", "danger")
             return redirect(url_for('añadir_medicamento'))
     elif vaciar_form.submit1.data and vaciar_form.validate():
+        MENSAJESQL = f"SELECT id_padim_tubo FROM padim_tubos WHERE id_tubo={tubo} AND id_padim={id_padim}"
+        SEND = conn.execute(MENSAJESQL)
+        ANSQL= SEND.fetchone()
+        conn.execute(f"DELETE FROM dispensacion WHERE id_padim_tubo= {ANSQL[0]}")
+        #conn.commit()
+
         conn.execute(f"UPDATE padim_tubos SET nombre = NULL, cantidad_dispensar = NULL, horario = NULL, dias = NULL, repeticion = NULL, toma_libre = NULL, mensaje = NULL, cantidad_disponible = NULL, carga = 0, vaciar = 1 WHERE id_padim = {id_padim} AND id_tubo = {tubo}")
         flash("Se vacio el tubo correctamente", "info")
         conn.commit()
@@ -405,10 +411,17 @@ def node():
         #CHEQUEO CARGA
         CARGACHECK = request.args.get('CargaChk')
 
+        #CHEQUEO VACIO
+        VACIOCHECK = request.args.get('VacioChk')
+
+        #RESETEO VACIO
+        VACIORESET = request.args.get('VacioRst')
+
         #ACTUALIZACION DE MEDICAMENTOS
         CARGAEND = request.args.get('CargaEnd')
         PAST = request.args.get('Past')
         CTDAD = request.args.get('Ctdad')
+        CARGACHANGE = request.args.get('CargaChng')
 
         #CHEQUEO ALARMAS
         ALARMASCHECK = request.args.get('AlarmaChk')
@@ -561,13 +574,54 @@ def node():
             conn.close()
 
         #
+        #CHEQUEO VACIO
+        #
+        if VACIOCHECK == '1':
+            VACIOCHECK = '0'
+            conn = sqlite3.connect('PADIM.db')
+
+            MENSAJESQL = f"SELECT id_tubo FROM {TUBOST} WHERE vacio=1 AND id_padim={PADIMID}"
+            SEND = conn.execute(MENSAJESQL)
+            ANSQL= SEND.fetchone()
+
+            MENSAJESQL = f"SELECT COUNT(*) FROM {TUBOST} WHERE vacio=1 AND id_padim={PADIMID}"
+            SEND = conn.execute(MENSAJESQL)
+            CANTIDAD = SEND.fetchone()
+
+            TONODE=""
+
+
+            if CANTIDAD[0]>=1:
+                TONODE= ANSQL[0]
+                return f"{TONODE}#"
+            else:
+                return f"N#"
+
+            conn.close()
+
+        #
+        #RESETEO VACIO
+        #
+        if VACIORESET == '1':
+            VACIORESET = '0'
+            conn = sqlite3.connect('PADIM.db')
+
+            MENSAJESQL = f"UPDATE {TUBOST} SET vacio=0 WHERE id_tubo={PAST} AND id_padim={PADIMID}"
+            SEND = conn.execute(MENSAJESQL)
+
+            conn.close()
+
+        #
         #ACTUALIZACIÓN DE MEDICAMENTOS
         #
         if CARGAEND == '1':
             CARGAEND = '0'
             conn = sqlite3.connect('PADIM.db')
+            if CARGACHANGE == '1':
+                MENSAJESQL = f"UPDATE {TUBOST} SET cantidad_disponible={CTDAD}, carga=0 WHERE id_tubo={PAST} AND id_padim={PADIMID}"
+            else:
+                MENSAJESQL = f"UPDATE {TUBOST} SET cantidad_disponible={CTDAD} WHERE id_tubo={PAST} AND id_padim={PADIMID}"
 
-            MENSAJESQL = f"UPDATE {TUBOST} SET cantidad_disponible={CTDAD}, carga=0 WHERE id_tubo={PAST} AND id_padim={PADIMID}"
             conn.execute(MENSAJESQL)
 
             conn.commit()

@@ -13,28 +13,29 @@
             <div>
                 <div class="row mt-5">
                     {% for producto in productos %}
-                    <div class="col-sm-3 mr-3" style="border: 1px gray solid; border-radius: 5px;">
-                        <div class="thumb-wrapper">
-                            <div class="img-box mt-2">
-                                <img src="../static/{{producto[1]}}.jpg" class="img-fluid" alt="{{producto[1]}}">
-                            </div>
-                            <div class="thumb-content">
-                                <h4>{{ producto[1] }}</h4>
-                                <h6>{{ producto[2] }}</h6>
-                                <div class="star-rating">
-                                    <ul class="list-inline">
-                                        <li class="list-inline-item"><i class="fa fa-star"></i></li>
-                                        <li class="list-inline-item"><i class="fa fa-star"></i></li>
-                                        <li class="list-inline-item"><i class="fa fa-star"></i></li>
-                                        <li class="list-inline-item"><i class="fa fa-star"></i></li>
-                                        <li class="list-inline-item"><i class="fa fa-star"></i></li>
-                                    </ul>
+                        <div class="col-sm-3 mr-3" style="border: 1px gray solid; border-radius: 5px;">
+                            <div class="thumb-wrapper">
+                                <div class="img-box mt-2">
+                                    <img src="../static/{{producto[1]}}.jpg" class="img-fluid" alt="{{producto[1]}}">
                                 </div>
-                                <p class="item-price"><b>${{ producto[5] }}</b></p>
-                                <a href="{{ url_for('comprar_producto', idproducto = producto[0]) }}" class="btn btn-outline-dark mb-3">Comprar ahora</a>
+                                <div class="thumb-content">
+                                    <h4>{{ producto[1] }}</h4>
+                                    <h6>{{ producto[2] }}</h6>
+                                    <div class="star-rating">
+                                        <ul class="list-inline">
+                                            <li class="list-inline-item"><i class="fa fa-star"></i></li>
+                                            <li class="list-inline-item"><i class="fa fa-star"></i></li>
+                                            <li class="list-inline-item"><i class="fa fa-star"></i></li>
+                                            <li class="list-inline-item"><i class="fa fa-star"></i></li>
+                                            <li class="list-inline-item"><i class="fa fa-star"></i></li>
+                                        </ul>
+                                    </div>
+                                    <p class="item-price"><b>${{ producto[5] }}</b></p>
+                                    <a href="{{ url_for('comprar_producto', idproducto = producto[0]) }}"
+                                        class="btn btn-outline-dark mb-3">Comprar ahora</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
                     {% endfor %}
 
 

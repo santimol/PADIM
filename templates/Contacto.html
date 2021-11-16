@@ -1,6 +1,7 @@
 {% extends "Template.html" %}
 
 {% block contenido %}
+
 <div class="formulario-contacto">
     <form method="POST" action="">
         {{ form.hidden_tag() }}
@@ -12,14 +13,14 @@
                         {{form.nombre(class="form-control formcontrol-lg is-invalid") }}
                         <div class="invalid-feedback">
                             {% for error in form.nombre.errors %}
-                            <span> {{ error }}</span>
+                                <span> {{ error }}</span>
                             {% endfor %}
                         </div>
                     {% else %}
                         {{ form.nombre(class="form-control form-control-lg") }}
                     {% endif %}
                 </div>
-                
+
                 <div class="form-group form-contacto">
                     {{ form.apellido.label(class="form-control-label") }}
                     {% if form.apellido.errors %}
@@ -42,14 +43,14 @@
                         {{form.telefono(class="form-control formcontrol-lg is-invalid") }}
                         <div class="invalid-feedback">
                             {% for error in form.telefono.errors %}
-                            <span> {{ error }}</span>
+                                <span> {{ error }}</span>
                             {% endfor %}
                         </div>
                     {% else %}
                         {{ form.telefono(class="form-control form-control-lg") }}
                     {% endif %}
                 </div>
-                
+
                 <div class="form-group form-contacto">
                     {{ form.mail.label(class="form-control-label") }}
                     {% if form.mail.errors %}
@@ -85,4 +86,5 @@
         </fieldset>
     </form>
 </div>
+
 {% endblock contenido %}

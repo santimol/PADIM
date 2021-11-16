@@ -17,8 +17,8 @@
                 {% else %}
                     {% if medicamento[2] != None %}
                         {{ añadir_form.nombre(class="form-control form-control-lg", value = medicamento[2]) }}
-                    {% else %}
-                        {{ añadir_form.nombre(class="form-control form-control-lg") }}
+                        {% else %}
+                    {{ añadir_form.nombre(class="form-control form-control-lg") }}
                     {% endif %}
                 {% endif %}
             </div>
@@ -28,7 +28,7 @@
                     {{añadir_form.horario(class="form-control formcontrol-lg is-invalid") }}
                     <div class="invalid-feedback">
                         {% for error in añadir_form.horario.errors %}
-                            <span> {{ error }}</span>
+                        <span> {{ error }}</span>
                         {% endfor %}
                     </div>
                 {% else %}
@@ -45,7 +45,7 @@
                     {{añadir_form.dia(class="form-control formcontrol-lg is-invalid") }}
                     <div class="invalid-feedback">
                         {% for error in form.dia.errors %}
-                            <span> {{ error }}</span>
+                        <span> {{ error }}</span>
                         {% endfor %}
                     </div>
                 {% else %}
@@ -58,7 +58,7 @@
                     {{añadir_form.cantidad(class="form-control formcontrol-lg is-invalid") }}
                     <div class="invalid-feedback">
                         {% for error in form.cantidad.errors %}
-                            <span> {{ error }}</span>
+                        <span> {{ error }}</span>
                         {% endfor %}
                     </div>
                 {% else %}
@@ -75,11 +75,11 @@
                     {{añadir_form.repeticion(class="form-control formcontrol-lg is-invalid") }}
                     <div class="invalid-feedback">
                         {% for error in añadir_form.repeticion.errors %}
-                            <span> {{ error }}</span>
+                        <span> {{ error }}</span>
                         {% endfor %}
                     </div>
                 {% else %}
-                        {{ añadir_form.repeticion(class="form-control form-control-lg selectpicker", title="Cada cuanto se debe repetir") }}
+                    {{ añadir_form.repeticion(class="form-control form-control-lg selectpicker", title="Cada cuanto se debe repetir") }}
                 {% endif %}
             </div>
             <div class="form-group">
@@ -88,7 +88,7 @@
                     {{añadir_form.mensaje(class="form-control formcontrol-lg is-invalid") }}
                     <div class="invalid-feedback">
                         {% for error in añadir_form.mensaje.errors %}
-                            <span> {{ error }}</span>
+                        <span> {{ error }}</span>
                         {% endfor %}
                     </div>
                 {% else %}
@@ -110,39 +110,38 @@
                 {{ añadir_form.toma_libre(class="form-control form-control-lg") }}
             {% endif %}
         </fieldset>
-        <div class="form-group text-center">
-            {{ añadir_form.submit_medicamento(class="btn btn-outline-dark") }}
-
-            {% if medicamento[2] != None %}
-                <div class="pt-4">
-                    {{vaciar_form.submit1(class="btn btn-outline-dark")}}
-                </div>
-                <div>
-                    <small class="text-muted">
-                        Al vaciar, se borra toda la informacion del medicamento
-                    </small>
-                </div>
-
-                {% if medicamento[11] == 1 %}
+            <div class="form-group text-center">
+                {{ añadir_form.submit_medicamento(class="btn btn-outline-dark") }}
+                {% if medicamento[2] != None %}
                     <div class="pt-4">
-                        {{deshabilitar_form.submit2(class="btn btn-outline-dark")}}
+                        {{vaciar_form.submit1(class="btn btn-outline-dark")}}
                     </div>
                     <div>
                         <small class="text-muted">
-                            Al deshabilitar, se desactiva la dispensacion del medicamento
+                            Al vaciar, se borra toda la informacion del medicamento
                         </small>
                     </div>
-                {% else %}
-                    <div class="pt-4">
-                        {{habilitar_form.submit3(class="btn btn-outline-dark")}}
-                    </div>
-                    <div>
-                        <small class="text-muted">
-                            Al habilitar, se activa la dispensacion del medicamento
-                        </small>
-                    </div>
+
+                    {% if medicamento[11] == 1 %}
+                        <div class="pt-4">
+                            {{deshabilitar_form.submit2(class="btn btn-outline-dark")}}
+                        </div>
+                        <div>
+                            <small class="text-muted">
+                                Al deshabilitar, se desactiva la dispensacion del medicamento
+                            </small>
+                        </div>
+                    {% else %}
+                        <div class="pt-4">
+                            {{habilitar_form.submit3(class="btn btn-outline-dark")}}
+                        </div>
+                        <div>
+                            <small class="text-muted">
+                                Al habilitar, se activa la dispensacion del medicamento
+                            </small>
+                        </div>
+                    {% endif %}
                 {% endif %}
-            {% endif %}
         </div>
     </form>
 </div>

@@ -1,7 +1,11 @@
 {% extends "Template.html" %}
 
+{% block head %}
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+{% endblock head %}
+
 {% block contenido %}
-<div class="container">
+<div class="container mb-3">
     <div class="card">
         <div class="card-body">
             <h3 class="card-title">{{ producto[1] }}</h3>
